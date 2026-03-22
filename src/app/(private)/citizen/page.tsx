@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, Clock, MapPin, Trophy, Flame, Award, Heart } from 'lucide-react';
+import { Calendar, MapPin, Trophy, Flame, Award, Heart } from 'lucide-react';
 import Link from 'next/link';
 
 const user = {
@@ -127,12 +127,12 @@ export default function CitizenDashboard() {
 
       {/* Acesso Rápido */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link href="/events">
+        <Link href="/citizen/actions">
           <Button size="lg" className="w-full h-24 text-lg bg-gradient-to-r from-primary to-secondary text-white">
             Ver Todos os Eventos
           </Button>
         </Link>
-        <Link href="/private/citizen/coach">
+        <Link href="/citizen/coach">
           <Button size="lg" variant="outline" className="w-full h-24 text-lg">
             <Heart className="mr-3" /> Falar com IA Coach
           </Button>

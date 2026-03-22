@@ -30,6 +30,8 @@ import {
   Loader2,
   Heart,
   Settings,
+  MapPinned,
+  Ticket,
 } from "lucide-react";
 import Link from "next/link";
 import { useLogout } from "@/features/auth/hooks/useLogout";
@@ -113,8 +115,10 @@ export function AppSidebar() {
     {
       CITIZEN: [
         { href: "/citizen", icon: Home, label: "Início" },
-        { href: "/events", icon: Calendar, label: "Eventos" },
+        { href: "/citizen/actions", icon: Calendar, label: "Ações" },
         { href: "/citizen/coach", icon: Heart, label: "IA Coach" },
+        { href: "/citizen/map", icon: MapPinned, label: "Mapa" },
+        { href: "/citizen/tickets", icon: Ticket, label: "Ingressos" },
       ],
       HEALTH_PROFESSIONAL: [
         { href: "/professional", icon: Home, label: "Eventos de Saúde" },
