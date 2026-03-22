@@ -8,7 +8,8 @@ export function proxy(request: NextRequest) {
   // Rotas públicas - permite acesso sem autenticação
   if (
     pathname === "/" ||
-    pathname.startsWith("/events")
+    pathname.startsWith("/events") ||
+    pathname.startsWith("/auth")
   ) {
     return NextResponse.next();
   }
