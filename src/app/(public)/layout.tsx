@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Promovida - Você quer salvar vidas?",
   description:
     "Plataforma oficial de promoção da saúde e qualidade de vida de Nova Lima",
+  icons: {
+    icon: '/favicon.png', 
+  },
 };
 
 export default function PublicLayout({
