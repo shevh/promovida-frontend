@@ -126,4 +126,3 @@ npm run lint                # Lint + Prettier
 **Feito com ❤️ para salvar vidas em Nova Lima – HackaSaúde 2026**
 
 ---
-```
