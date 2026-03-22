@@ -5,16 +5,17 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Rotas públicas
+  // Rotas públicas - permite acesso sem autenticação
   if (
-    pathname.startsWith("/auth") ||
     pathname === "/" ||
+    pathname.startsWith("/auth") ||
     pathname.startsWith("/events") ||
     pathname.startsWith("/about")
   ) {
     return NextResponse.next();
   }
 
+  // Verifica se tem token de acesso
   const token = request.cookies.get("access_token")?.value;
 
   if (!token) {
@@ -24,23 +25,37 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirecionamento por role (se estiver na raiz do private)
+  // Pega o role do cookie (setado no login)
   const role = request.cookies.get("role")?.value || "CITIZEN";
 
+  // Se o usuário acessar /private ou /private/ → redireciona para o dashboard correto
   if (pathname === "/private" || pathname === "/private/") {
-    if (role === "CITIZEN")
-      return NextResponse.redirect(new URL("/private/citizen", request.url));
-    if (role === "HEALTH_PROFESSIONAL")
-      return NextResponse.redirect(
-        new URL("/private/professional", request.url)
-      );
-    if (role === "MANAGER" || role === "ADMIN")
-      return NextResponse.redirect(new URL("/private/manager", request.url));
+    if (role === "CITIZEN") {
+      return NextResponse.redirect(new URL("/citizen", request.url));
+    }
+    if (role === "HEALTH_PROFESSIONAL") {
+      return NextResponse.redirect(new URL("/professional", request.url));
+    }
+    if (role === "MANAGER" || role === "ADMIN") {
+      return NextResponse.redirect(new URL("/manager", request.url));
+    }
+    // Fallback caso role inválido
+    return NextResponse.redirect(new URL("/citizen", request.url));
   }
 
+  // Para todas as outras rotas autenticadas, continua normalmente
+  // (você pode adicionar mais regras de autorização aqui depois)
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    /*
+     * Aplica o middleware em todas as rotas exceto:
+     * - api routes
+     * - arquivos estáticos (_next/)
+     * - imagens e favicon
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };

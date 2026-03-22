@@ -1,7 +1,6 @@
 // src/app/(private)/professional/page.tsx
 "use client";
 
-import AppShell from "@/components/layout/AppShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -116,7 +115,6 @@ export default function ProfessionalDashboard() {
       : eventos.filter(e => e.location === selectedBairro);
 
   return (
-    <AppShell>
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -223,7 +221,6 @@ export default function ProfessionalDashboard() {
             </Card>
           ))}
         </div>
-      </div>
 
       {/* Modal: Direcionar Profissional */}
       <Dialog open={isAssignModalOpen} onOpenChange={setIsAssignModalOpen}>
@@ -314,6 +311,6 @@ export default function ProfessionalDashboard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AppShell>
+      </div>
   );
 }

@@ -1,4 +1,5 @@
 // src/app/(private)/layout.tsx
+import { TooltipProvider } from "@/components/ui/tooltip";
 import AppShell from "@/components/layout/AppShell";
 
 export default function PrivateLayout({
@@ -6,5 +7,9 @@ export default function PrivateLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell>{children}</AppShell>;
+  return (
+    <TooltipProvider>
+      <AppShell>{children}</AppShell>
+    </TooltipProvider>
+  );
 }

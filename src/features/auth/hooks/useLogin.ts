@@ -10,25 +10,41 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: data => {
-      // Salva os tokens nos cookies (o backend já envia, mas reforçamos)
-      document.cookie = `access_token=${data.accessToken}; path=/; max-age=900`;
-      document.cookie = `refresh_token=${data.refreshToken}; path=/; max-age=604800`;
+      // Salva tokens
+      document.cookie = `access_token=${data.accessToken}; path=/; max-age=900; samesite=strict`;
+      document.cookie = `refresh_token=${data.refreshToken}; path=/; max-age=604800; samesite=strict`;
 
-      // Pega o role do usuário (vem do backend)
-      const role = data.user.role || "CITIZEN";
+      const userRoles = data.user?.roles || [];
+      const mainRole = userRoles.length > 0 ? userRoles[0].role : "CITIZEN";
+
+      document.cookie = `role=${mainRole}; path=/; max-age=604800; samesite=strict`;
+
+      // ── NOVO: Salva dados do usuário no localStorage ──
+      const userData = {
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        avatarUrl: data.user.avatarUrl || null,
+        role: mainRole,
+      };
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      console.log("Login response completa:", data);
+      console.log("Role principal usado:", mainRole);
 
       toast.success("Login realizado com sucesso!");
 
-      // Redirecionamento correto por role
-      if (role === "MANAGER" || role === "ADMIN") {
-        router.push("/private/manager");
-      } else if (role === "HEALTH_PROFESSIONAL") {
-        router.push("/private/professional");
+      // redirecionamento...
+      if (mainRole === "MANAGER" || mainRole === "ADMIN") {
+        router.push("/manager");
+      } else if (mainRole === "HEALTH_PROFESSIONAL") {
+        router.push("/professional");
       } else {
-        router.push("/private/citizen");
+        router.push("/citizen");
       }
     },
     onError: (error: any) => {
+      console.error("Erro no login:", error);
       toast.error(error.message || "Email ou senha incorretos");
     },
   });
