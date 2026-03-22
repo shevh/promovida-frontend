@@ -49,13 +49,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Aplica o middleware em todas as rotas exceto:
-     * - api routes
-     * - arquivos estáticos (_next/)
-     * - imagens e favicon
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: [ "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|gif|webp)).*)"],
 };
