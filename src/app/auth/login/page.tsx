@@ -22,7 +22,9 @@ import Image from "next/image";
 
 export default function LoginPage() {
   const { mutate: login, isPending } = useLogin();
-  const [showForm, setShowForm] = useState(false); 
+  const [screen, setScreen] = useState<"login" | "register">("login");
+  const [isRegistering, setIsRegistering] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -36,103 +38,164 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-zinc-950">
-      <div
-        className={`w-full md:w-1/2 h-screen hero-gradient flex flex-col items-center justify-center gap-6 ${
-          showForm ? "hidden md:flex" : "flex"
-        }`}
-      >
+      <div className="w-full md:w-1/2 h-screen hero-gradient flex flex-col items-center justify-center gap-6">
         <Image src="/logo.png" alt="Logo" width={300} height={300} />
 
         <button
-          onClick={() => setShowForm(true)}
-          className="w-[60%] h-[6vh] bg-white rounded-[8px] text-primary font-semibold cursor-pointer hover:bg-gray-100 transition"
+          onClick={() => setScreen("login")}
+          className={`w-[60%] h-[6vh] rounded-[8px] font-semibold transition cursor-pointer ${
+            screen === "login"
+              ? "bg-white text-primary"
+              : "border border-white text-white/50 hover:text-white"
+          }`}
         >
           Entrar
         </button>
 
-        <button className="w-[60%] h-[6vh] rounded-[8px] text-white/50 border border-white/50 font-semibold cursor-pointer hover:text-white transition">
+        <button
+          onClick={() => setScreen("register")}
+          className={`w-[60%] h-[6vh] rounded-[8px] font-semibold transition cursor-pointer ${
+            screen === "register"
+              ? "bg-white text-primary"
+              : "border border-white text-white/50 hover:text-white"
+          }`}
+        >
           Cadastrar
         </button>
       </div>
 
-      <div
-        className={`w-full md:w-1/2 h-screen flex items-center justify-center ${
-          showForm ? "flex" : "hidden md:flex"
-        }`}
-      >
+      <div className="w-full md:w-1/2 h-screen flex items-center justify-center">
         <div className="w-full max-w-md flex flex-col gap-6 px-6">
-          
-          <CardHeader className="w-[100%] text-center space-y-2">
+          <CardHeader className="w-full text-center space-y-2">
             <CardTitle className="text-2xl md:text-3xl whitespace-nowrap">
-              Bem-vindo ao Promovida
+              Bem-vindo ao Conexão Saúde
             </CardTitle>
             <CardDescription className="text-base">
-              Faça login para continuar
+              {screen === "login" && "Faça login para continuar"}
+              {screen === "register" && "Crie sua conta para começar"}
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  className="h-12 text-base"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
+            {screen === "login" && (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <div className="space-y-2">
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    className="h-12 text-base"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  className="h-12 text-base"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-sm text-red-500">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
+                <div className="space-y-2">
+                  <Label>Senha</Label>
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    className="h-12 text-base"
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
 
-              <Button
-                type="submit"
-                className="w-full h-12 hero-gradient text-white text-base font-semibold"
-                disabled={isPending}
+                <Button
+                  type="submit"
+                  className="w-full h-12 hero-gradient text-white text-base font-semibold"
+                  disabled={isPending}
+                >
+                  {isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Entrar
+                </Button>
+              </form>
+            )}
+
+            {screen === "register" && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setIsRegistering(true);
+                  setTimeout(() => {
+                    setIsRegistering(false);
+                    setScreen("login");
+                  }, 1500);
+                }}
+                className="space-y-5"
               >
-                {isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Entrar
-              </Button>
-            </form>
+                <div className="space-y-2">
+                  <Label>Nome</Label>
+                  <Input
+                    type="text"
+                    placeholder="Seu nome"
+                    className="h-12 text-base"
+                  />
+                </div>
 
-            <button
-              onClick={() => setShowForm(false)}
-              className="md:hidden text-sm text-muted-foreground"
-            >
-              ← Voltar
-            </button>
+                <div className="space-y-2">
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    className="h-12 text-base"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Senha</Label>
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    className="h-12 text-base"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 hero-gradient text-white text-base font-semibold"
+                  disabled={isRegistering}
+                >
+                  {isRegistering && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Criar conta
+                </Button>
+              </form>
+            )}
 
             <div className="text-center text-sm">
-              Não tem conta?{" "}
-              <Link
-                href="/auth/register"
-                className="text-primary font-medium hover:underline"
-              >
-                Cadastre-se
-              </Link>
+              {screen === "login" ? (
+                <>
+                  Não tem conta?{" "}
+                  <button
+                    onClick={() => setScreen("register")}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Cadastre-se
+                  </button>
+                </>
+              ) : (
+                <>
+                  Já tem conta?{" "}
+                  <button
+                    onClick={() => setScreen("login")}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Entrar
+                  </button>
+                </>
+              )}
             </div>
           </CardContent>
         </div>

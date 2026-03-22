@@ -1,38 +1,63 @@
-// src/app/page.tsx
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Users, MapPin, Award } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Heart, Users, Trophy, Menu} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="hero-gradient text-white pt-24 pb-20">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6">
-            <span className="text-xs font-medium tracking-widest">
-              NOVA LIMA • MG
-            </span>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-zinc-950 dark:to-zinc-900">
+       <header className="border-b bg-white dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          {/* Logo - Usando secondary */}
+          <Link href="/" className="flex items-center gap-3">
+              <Image src="/logoConexao.png" alt="Logo" width={200} height={200} />
+          </Link>
 
-          <h1 className="text-6xl md:text-7xl font-bold tracking-tighter mb-6">
-            Você quer
-            <br />
-            <span className="text-white/90">salvar vidas?</span>
-          </h1>
+          {/* Menu Desktop */}
+          <nav className="hidden md:flex items-center gap-10 text-sm font-medium">
+            <Link href="/" className="hover:text-primary transition-colors">
+              Início
+            </Link>
+            <Link
+              href="/events"
+              className="hover:text-primary transition-colors"
+            >
+              Ações
+            </Link>
+          </nav>
 
-          <p className="text-2xl md:text-3xl text-white/90 max-w-3xl mx-auto mb-10">
-            Promovida conecta você às ações gratuitas de saúde da Prefeitura de
-            Nova Lima.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* Botões */}
+          <div className="flex items-center gap-4">
             <Link href="/auth/login">
-              <Button
-                size="lg"
-                className="btn-primary text-lg px-10 h-14 rounded-xl font-semibold"
-              >
+              <Button variant="outline" className="font-medium">
+                Entrar
+              </Button>
+            </Link>
+            <Link href="/auth/register">
+              <Button className="bn-primary">Cadastrar-se</Button>
+            </Link>
+
+            {/* Menu Mobile */}
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Menu className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+      </header>
+      {/* Hero - Degradê */}
+     <section className="h-[80vh] conection-gradient text-white flex flex-col items-center justify-center text-center px-6">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-5xl font-bold tracking-tight mb-6">
+            Você quer <span className="text-white/90">salvar vidas</span>?
+          </h1>
+          <p className="text-2xl text-white/90 mb-8">
+            Conexão Saúde é a plataforma oficial de Nova Lima que transforma
+            prevenção em ação.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Link href="/auth/login">
+              <Button size="lg"  className="text-lg h-[8vh] px-10 border-white text-white bg-white/10 hover:bg-white hover:text-primary">
                 Entrar agora
               </Button>
             </Link>
@@ -40,91 +65,142 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-lg px-10 h-14 rounded-xl border-white text-white hover:bg-white hover:text-primary"
+               className="text-lg h-[8vh] px-10 border-white text-white bg-white/10 hover:bg-white hover:text-primary"
               >
                 Ver ações gratuitas
               </Button>
             </Link>
           </div>
-
-          <p className="mt-8 text-white/80 text-sm">
-            +100 atividades • Totalmente gratuito • Para toda a população
-          </p>
         </div>
       </section>
 
-      {/* Estatística Impactante */}
-      <section className="py-16 bg-white dark:bg-zinc-950 border-b">
-        <div className="max-w-4xl mx-auto text-center px-6">
-          <div className="text-7xl font-bold text-red-600 mb-3">59%</div>
-          <p className="text-2xl font-medium text-zinc-700 dark:text-zinc-300">
-            das mortes em Nova Lima são causadas por doenças crônicas não
-            transmissíveis.
+      {/* Estatística - Verde */}
+      <section className="bg-zinc-100 dark:bg-zinc-900 text-white py-12 h-[40vh] flex flex-col items-center justify-center">
+        <div className="max-w-3xl mx-auto text-center px-6">
+          <div className="text-6xl font-bold mb-4 text-conection-gradient text-destructive">59%</div>
+          <p className="text-2xl text-black text-medium">
+            das mortes em Nova Lima (2023-2025) foram causadas por doenças
+            crônicas não transmissíveis.
           </p>
-          <p className="text-zinc-500 mt-2">
+          <p className="mt-4 text-black">
             A maioria poderia ser evitada com hábitos simples.
           </p>
         </div>
       </section>
 
-      {/* Benefícios */}
-      <section className="py-20 px-6 bg-zinc-50 dark:bg-zinc-900">
-        <div className="max-w-6xl mx-auto">
+      {/* Ícones da solução */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-4xl font-bold mb-6">O problema era simples:</h2>
+            {/* lista mantida igual */}
+          </div>
+
+          <div className="bg-white dark:bg-zinc-900 p-10 rounded-3xl shadow-xl">
+            <h2 className="text-4xl font-bold mb-8 text-center">
+              A solução chegou.
+            </h2>
+            <div className="space-y-8">
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center">
+                  🗺️
+                </div>
+                <div>
+                  <strong>Mapa inteligente</strong>
+                  <p className="text-muted-foreground">
+                    Encontre ações perto da sua casa em 3 segundos.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center">
+                  🤖
+                </div>
+                <div>
+                  <strong>Coach de IA</strong>
+                  <p className="text-muted-foreground">
+                    Recomendações personalizadas de atividades.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center">
+                  🏆
+                </div>
+                <div>
+                  <strong>Gamificação</strong>
+                  <p className="text-muted-foreground">
+                    Badges, streaks e conquistas para manter você motivado.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Para quem é */}
+      <section className="bg-zinc-100 dark:bg-zinc-900 py-16">
+        <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-center text-4xl font-bold mb-12">
-            Tudo que você precisa em um só lugar
+            Promovida foi feita para 3 pessoas:
           </h2>
-
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 hover:shadow-xl transition-all">
-              <MapPin className="w-12 h-12 text-primary mb-6" />
-              <h3 className="text-2xl font-semibold mb-3">Mapa Inteligente</h3>
-              <p className="text-muted-foreground">
-                Encontre atividades perto da sua casa em segundos.
-              </p>
+            <Card>
+              <CardContent className="pt-8 text-center">
+                <Users className="w-12 h-12 mx-auto mb-4 text-secondary" />
+                <h3 className="text-2xl font-semibold mb-3">Cidadão</h3>
+                <p className="text-muted-foreground">
+                  Descubra atividades perto de casa, faça check-in, ganhe badges
+                  e melhore sua saúde.
+                </p>
+              </CardContent>
             </Card>
 
-            <Card className="p-8 hover:shadow-xl transition-all">
-              <Award className="w-12 h-12 text-secondary mb-6" />
-              <h3 className="text-2xl font-semibold mb-3">Gamificação</h3>
-              <p className="text-muted-foreground">
-                Badges, streaks e conquistas para manter você motivado.
-              </p>
+            <Card>
+              <CardContent className="pt-8 text-center">
+                <Heart className="w-12 h-12 mx-auto mb-4 text-red-600" />
+                <h3 className="text-2xl font-semibold mb-3">
+                  Profissional de Saúde
+                </h3>
+                <p className="text-muted-foreground">
+                  Prescreva ações reais como se fossem remédios.
+                </p>
+              </CardContent>
             </Card>
 
-            <Card className="p-8 hover:shadow-xl transition-all">
-              <Users className="w-12 h-12 text-primary mb-6" />
-              <h3 className="text-2xl font-semibold mb-3">Coach de IA</h3>
-              <p className="text-muted-foreground">
-                Recomendações personalizadas baseadas no seu perfil.
-              </p>
+            <Card>
+              <CardContent className="pt-8 text-center">
+                <Trophy className="w-12 h-12 mx-auto mb-4 text-amber-600" />
+                <h3 className="text-2xl font-semibold mb-3">Gestor Público</h3>
+                <p className="text-muted-foreground">
+                  Veja em tempo real onde tem mais adesão.
+                </p>
+              </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
       {/* CTA Final */}
-      <section className="py-20 text-center hero-gradient text-white">
-        <div className="max-w-2xl mx-auto px-6">
-          <h2 className="text-5xl font-bold mb-6">Comece hoje mesmo</h2>
-          <p className="text-xl mb-10">
-            Milhares de novalimenses já estão mudando seus hábitos com
-            Promovida.
+      <section className="py-20 text-center conection-gradient text-white">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold mb-6">Pronto para começar?</h2>
+          <p className="text-xl text-white/90 mb-10">
+            Junte-se a milhares de novalimenses que já estão mudando seus
+            hábitos.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex gap-4 justify-center">
             <Link href="/auth/login">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="text-lg px-12 h-14"
-              >
-                Entrar na plataforma
+              <Button size="lg" className="text-lg px-10 h-[8vh]">
+                Entrar no Conexão Saúde
               </Button>
             </Link>
             <Link href="/events">
               <Button
                 size="lg"
-                className="text-lg px-12 h-14 border-white text-white hover:bg-white hover:text-primary"
+                variant="outline"
+                className="h-[8vh] text-lg px-10 border-white text-primary hover:bg-white hover:text-primary"
               >
                 Ver ações agora
               </Button>

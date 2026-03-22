@@ -61,12 +61,17 @@
   --color-secondary-600: #2ac96d;
 
   --color-hero-gradient: linear-gradient(135deg, #3ecdf3 0%, #35e47d 100%);
+  --color-conection-gradient: linear-gradient(135deg,#35e47d,#3ecdf3,#6c60e6,#dd2287,#e6502c);
 }
 
 /* ==================== COMPONENTES CUSTOM ==================== */
 @layer components {
   .hero-gradient {
     background: var(--color-hero-gradient);
+  }
+
+  .conection-gradient {
+     background: var(--color-conection-gradient);
   }
 
   .btn-primary {
