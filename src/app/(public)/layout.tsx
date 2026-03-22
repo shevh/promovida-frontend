@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Heart, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Promovida - Você quer salvar vidas?",
@@ -25,10 +26,10 @@ export default function PublicLayout({
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           {/* Logo - Usando secondary */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-secondary rounded-xl flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center">
+               <Image src="/favicon.png" alt="Logo" width={300} height={300} />
             </div>
-            <span className="font-bold text-2xl tracking-tight">Promovida</span>
+            <span className="font-bold text-2xl tracking-tight">Conexão Saúde</span>
           </Link>
 
           {/* Menu Desktop */}
@@ -40,13 +41,7 @@ export default function PublicLayout({
               href="/events"
               className="hover:text-primary transition-colors"
             >
-              Eventos
-            </Link>
-            <Link
-              href="/about"
-              className="hover:text-primary transition-colors"
-            >
-              Sobre
+              Ações
             </Link>
           </nav>
 
