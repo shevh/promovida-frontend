@@ -11,7 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar, // ← Importe isso! (disponível no shadcn sidebar)
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useLogout } from "@/features/auth/hooks/useLogout";
-import { cn } from "@/lib/utils"; // ← Importe cn do shadcn (para classes condicionais)
+import { cn } from "@/lib/utils";
 
 type Role = "CITIZEN" | "HEALTH_PROFESSIONAL" | "MANAGER" | "ADMIN";
 
@@ -49,7 +49,7 @@ interface UserData {
 
 export function AppSidebar() {
   const { mutate: logoutMutation, isPending } = useLogout();
-  const { state } = useSidebar(); // "expanded" | "collapsed"
+  const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   const [user, setUser] = useState<UserData | null>(null);
@@ -71,7 +71,6 @@ export function AppSidebar() {
         }
       }
 
-      // Fallback role do cookie
       const cookies = document.cookie.split(";");
       const roleCookie = cookies.find(c => c.trim().startsWith("role="));
       let fallbackRole: Role = "CITIZEN";
@@ -110,7 +109,6 @@ export function AppSidebar() {
   const avatarSrc = user?.avatarUrl ?? "/default-avatar.png";
   const role = user?.role ?? "CITIZEN";
 
-  // Menus por role
   const menuItems: Record<Role, { href: string; icon: any; label: string }[]> =
     {
       CITIZEN: [
@@ -150,9 +148,14 @@ export function AppSidebar() {
             isCollapsed ? "justify-center px-0" : "px-4"
           )}
         >
-          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-xl">NL</span>
-          </div>
+          {/* Logo: usa o favicon.png do projeto */}
+          <Avatar className="h-9 w-9 rounded-xl flex-shrink-0 shadow-sm">
+            <AvatarImage src="/favicon.png" alt="Promovida" />
+            <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xl">
+              P
+            </AvatarFallback>
+          </Avatar>
+
           {!isCollapsed && (
             <div className="font-bold text-xl tracking-tight">Promovida</div>
           )}

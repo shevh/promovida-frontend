@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Plataforma oficial de promoção da saúde e qualidade de vida de Nova Lima",
   icons: {
-    icon: '/favicon.png', 
+    icon: "/favicon.png",
   },
 };
 
@@ -26,10 +26,7 @@ export default function PublicLayout({
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           {/* Logo - Usando secondary */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center">
-               <Image src="/favicon.png" alt="Logo" width={300} height={300} />
-            </div>
-            <span className="font-bold text-2xl tracking-tight">Conexão Saúde</span>
+            <Image src="/logoConexao.png" alt="Logo" width={200} height={200} />
           </Link>
 
           {/* Menu Desktop */}

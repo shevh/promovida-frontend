@@ -1,5 +1,6 @@
 // src/app/(private)/citizen/coach/page.tsx
-"use client";;
+"use client";
+
 import { useState, useRef, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,11 +13,17 @@ interface UserData {
   email: string;
   avatarUrl: string | null;
   role: string;
-  // Adicione aqui outros campos que você salva no login, ex: level, points, badges, location
   level?: number;
   points?: number;
   badges?: number;
   location?: string;
+}
+
+// Mock de inscrições (para simular o que o usuário já "inscreveu")
+interface Inscription {
+  event: string;
+  date: string;
+  status: "confirmado" | "pendente";
 }
 
 export default function CitizenCoachPage() {
@@ -25,15 +32,18 @@ export default function CitizenCoachPage() {
     {
       id: 1,
       sender: "assistant",
-      text: "Olá! 👋 Sou o assistente de saúde da Prefeitura de Nova Lima. Posso ajudar com informações sobre saúde, nutrição, eventos e muito mais. Como posso ajudar você hoje?",
+      text: "Olá! 👋 Sou o assistente de saúde da Prefeitura de Nova Lima. Posso ajudar com informações sobre corridas, artesanato, lazer, apoio psicológico, suporte, endereços de UBS, vacinação, nutrição, dengue, eventos e muito mais. Como posso ajudar você hoje?",
       time: "agora",
     },
   ]);
 
   const [user, setUser] = useState<UserData | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [inscriptions, setInscriptions] = useState<Inscription[]>([]); // Simula inscrições do usuário
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Carrega usuário do localStorage (igual à sidebar)
+  // Carrega usuário do localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -41,7 +51,7 @@ export default function CitizenCoachPage() {
         const parsed = JSON.parse(storedUser) as UserData;
         setUser(parsed);
       } catch (error) {
-        console.error("Erro ao carregar usuário do localStorage:", error);
+        console.error("Erro ao carregar usuário:", error);
       }
     }
   }, []);
@@ -57,31 +67,167 @@ export default function CitizenCoachPage() {
   const handleSend = () => {
     if (!message.trim()) return;
 
+    const userMessage = message.trim();
+    const msgLower = userMessage.toLowerCase();
+
     // Adiciona mensagem do usuário
     setMessages(prev => [
       ...prev,
       {
         id: prev.length + 1,
         sender: "user",
-        text: message,
+        text: userMessage,
         time: "agora",
       },
     ]);
 
-    // Simulação de resposta da IA (substitua por fetch real ao backend)
-    setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          sender: "assistant",
-          text: "Entendi! Você quer saber sobre eventos de yoga? Essa semana temos aula no Parque Municipal às 07h. Quer mais detalhes ou inscrição?",
-          time: "agora",
-        },
-      ]);
-    }, 1200);
+    setIsTyping(true);
+
+    setTimeout(
+      () => {
+        const response = getAssistantResponse(msgLower, userMessage);
+        setMessages(prev => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            sender: "assistant",
+            text: response.text,
+            time: "agora",
+          },
+        ]);
+
+        // Se for confirmação de inscrição
+        if (response.isInscriptionConfirmation) {
+          setInscriptions(prev => [
+            ...prev,
+            {
+              event: response.event || "Evento sugerido",
+              date: response.date || "Data não informada",
+              status: "confirmado",
+            },
+          ]);
+        }
+
+        setIsTyping(false);
+      },
+      1200 + Math.random() * 800
+    );
 
     setMessage("");
+  };
+
+  const getAssistantResponse = (msgLower: string, originalMsg: string) => {
+    // Verifica se é uma confirmação após sugestão anterior
+    const lastAssistantMsg = messages[messages.length - 1]?.text || "";
+    const isConfirmation =
+      msgLower.includes("sim") ||
+      msgLower.includes("quero") ||
+      msgLower.includes("inscreva") ||
+      msgLower.includes("confirma") ||
+      msgLower.includes("confirmar") ||
+      msgLower.includes("ok") ||
+      msgLower.includes("pode");
+
+    if (isConfirmation && lastAssistantMsg.includes("Quer se inscrever")) {
+      return {
+        text: `Perfeito, ${user?.name ?? "amigo"}! 🎉 Sua inscrição para a Corrida pela Saúde 2026 foi confirmada. Você recebeu +50 pontos por participar! O QR Code do ingresso será enviado para seu e-mail e aparece na aba "Meus Ingressos". Qualquer dúvida, é só chamar!`,
+        isInscriptionConfirmation: true,
+        event: "Corrida pela Saúde 2026",
+        date: "14/04/2026",
+      };
+    }
+
+    if (isConfirmation && lastAssistantMsg.includes("Quer o cronograma")) {
+      return {
+        text: `Ótimo! Sua inscrição na aula de Yoga no Parque foi confirmada. +30 pontos adicionados ao seu saldo! O local é Vila da Serra, dia 19/04 às 06:30. Veja os detalhes na aba "Meus Ingressos".`,
+        isInscriptionConfirmation: true,
+        event: "Yoga no Parque",
+        date: "19/04/2026",
+      };
+    }
+
+    // Detecção de temas
+    if (
+      msgLower.includes("corrida") ||
+      msgLower.includes("correr") ||
+      msgLower.includes("maratona") ||
+      msgLower.includes("caminhada")
+    ) {
+      return {
+        text: "Temos várias corridas e caminhadas de promoção da saúde! A próxima é a Corrida pela Saúde 2026 no dia 14/04 às 07h no Centro. Inclui avaliação física gratuita e orientação nutricional. Quer se inscrever ou saber mais detalhes?",
+        isInscriptionConfirmation: false,
+      };
+    }
+
+    if (
+      msgLower.includes("artesanato") ||
+      msgLower.includes("artesanal") ||
+      msgLower.includes("manual") ||
+      (msgLower.includes("feira") && msgLower.includes("artesanato"))
+    ) {
+      return {
+        text: "As feiras de artesanato são ótimas para lazer e terapia! Tem várias acontecendo em Nova Lima, principalmente nos fins de semana no Centro e em Jardim Canadá. Posso te enviar a lista de eventos de artesanato desse mês?",
+        isInscriptionConfirmation: false,
+      };
+    }
+
+    if (
+      msgLower.includes("lazer") ||
+      msgLower.includes("parque") ||
+      msgLower.includes("diversão") ||
+      msgLower.includes("recreação") ||
+      msgLower.includes("yoga")
+    ) {
+      return {
+        text: "Para momentos de lazer, temos Yoga no Parque, caminhadas guiadas e eventos no Parque Municipal. A próxima aula de yoga é dia 19/04 às 06:30 na Vila da Serra. Quer se inscrever ou o cronograma completo de lazer?",
+        isInscriptionConfirmation: false,
+      };
+    }
+
+    if (
+      msgLower.includes("psicológico") ||
+      msgLower.includes("psicologia") ||
+      msgLower.includes("terapia") ||
+      msgLower.includes("depressão") ||
+      msgLower.includes("ansiedade") ||
+      msgLower.includes("saúde mental")
+    ) {
+      return {
+        text: "A Prefeitura oferece apoio psicológico gratuito em várias UBS e no Centro de Atenção Psicossocial (CAPS). Podemos agendar uma conversa ou te indicar o endereço mais próximo? Você está precisando de ajuda urgente?",
+        isInscriptionConfirmation: false,
+      };
+    }
+
+    if (
+      msgLower.includes("suporte") ||
+      msgLower.includes("ajuda") ||
+      msgLower.includes("orientação")
+    ) {
+      return {
+        text: "Claro! Estou aqui para ajudar. Pode falar sobre saúde física, mental, nutrição, eventos, endereços ou qualquer dúvida. O que está precisando hoje? 😊",
+        isInscriptionConfirmation: false,
+      };
+    }
+
+    if (
+      msgLower.includes("endereço") ||
+      msgLower.includes("onde fica") ||
+      msgLower.includes("localização") ||
+      msgLower.includes("ubs") ||
+      msgLower.includes("posto") ||
+      msgLower.includes("centro de saúde")
+    ) {
+      return {
+        text: "Temos várias unidades de saúde em Nova Lima! Qual tipo de serviço você precisa? Ex: UBS Centro (Rua Principal, 123 - Centro), CAPS Jardim Canadá (Av. das Flores, 456), etc. Me diz o bairro que te indico o mais próximo!",
+        isInscriptionConfirmation: false,
+      };
+    }
+
+    // Fallback
+    return {
+      text: "Entendi! 😊 Pode falar mais sobre o que você precisa? Estou aqui para ajudar com corridas, artesanato, lazer, apoio psicológico, suporte, endereços de unidades, eventos, nutrição ou qualquer outra dúvida sobre os serviços da Prefeitura de Nova Lima.",
+      isInscriptionConfirmation: false,
+    };
   };
 
   // Valores com fallback
@@ -162,9 +308,7 @@ export default function CitizenCoachPage() {
           {messages.map(msg => (
             <div
               key={msg.id}
-              className={`flex gap-3 max-w-[85%] ${
-                msg.sender === "user" ? "ml-auto justify-end" : ""
-              }`}
+              className={`flex gap-3 max-w-[85%] ${msg.sender === "user" ? "ml-auto justify-end" : ""}`}
             >
               {msg.sender === "assistant" && (
                 <Avatar className="h-10 w-10 flex-shrink-0">
@@ -198,6 +342,20 @@ export default function CitizenCoachPage() {
             </div>
           ))}
 
+          {/* Animação de "digitando..." */}
+          {isTyping && (
+            <div className="flex gap-3">
+              <Avatar className="h-10 w-10 flex-shrink-0">
+                <AvatarFallback className="bg-gradient-to-br from-teal-500 to-teal-600 text-white">
+                  IA
+                </AvatarFallback>
+              </Avatar>
+              <div className="bg-white rounded-2xl px-4 py-3 shadow-sm animate-pulse">
+                Digitando...
+              </div>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
 
@@ -212,7 +370,7 @@ export default function CitizenCoachPage() {
             </Button>
 
             <Input
-              placeholder="Pergunte sobre saúde, nutrição, eventos..."
+              placeholder="Pergunte sobre corridas, artesanato, lazer, apoio psicológico, endereços, eventos..."
               value={message}
               onChange={e => setMessage(e.target.value)}
               onKeyDown={e =>
